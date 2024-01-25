@@ -1,9 +1,17 @@
 from fastapi import FastAPI, HTTPException
-
+from sqlalchemy.orm.exc import UnmappedInstanceError
+from typing import Annotated
 from model.database import DBSession
 from model import models
+from schemas import BaseModel
+
+
 
 app = FastAPI()
+
+
+
+
 
 from schemas import NoteInput
 #Health checks
@@ -77,3 +85,22 @@ def update_note(note_id: int, updated_note: NoteInput):
     finally:
         db.close()
     return note
+
+@app.delete("/notes/{note_id}")
+def delete_note(note_id: int):
+    db = DBSession()
+    try:
+        note = db.query(models.Note).filter(models.Note.id == note_id).first()
+        db.delete(note)
+        db.commit()
+    except UnmappedInstanceError:
+        raise HTTPException(status_code=400, detail={
+            "status": "Error 400 - Bad Request",
+            "message": f"Note with `id` `{note_id}` doesn't exist."
+        })
+    finally:
+        db.close()
+    return {
+        "status": "200 - Success",
+        "message": "Note deleted successfully."
+        }
