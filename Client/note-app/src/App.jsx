@@ -1,35 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect, createContext } from 'react';
+import axios from 'axios';
+import AddNote from "./components/AddNote";
+import NotesList from "./components/NotesList";
 
-function App() {
-  const [count, setCount] = useState(0)
+export const NotesListUpdateFunctionContext = createContext(null);
+
+
+export default function App() {
+  const [notes, setNotes] = useState([]);
+  useEffect(() => {
+    const getNotes = async () => {
+      const API_URL = "http://localhost:8000/notes";
+      const { data } = await axios.get(`${API_URL}/notes`);
+      setNotes(data);
+    }
+    getNotes();
+  }, []);
+
 
   return (
-    <>
+    <NotesListUpdateFunctionContext.Provider value={setNotes}>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1 id="app-title">Notes App</h1>
+        <AddNote />
+        <NotesList notes={notes} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </NotesListUpdateFunctionContext.Provider>
+  );
 }
-
-export default App
