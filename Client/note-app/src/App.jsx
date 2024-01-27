@@ -1,7 +1,8 @@
 import { useState, useEffect, createContext } from 'react';
 import axios from 'axios';
-import AddNote from "./components/AddNote";
-import NotesList from "./components/NotesList";
+import AddNote from './components/AddNote/AddNote';
+//import AddNote from "./components/AddNote";
+import NotesList from "./components/AddNote/NotesList";
 
 export const NotesListUpdateFunctionContext = createContext(null);
 

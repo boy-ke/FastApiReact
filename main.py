@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm.exc import UnmappedInstanceError
 from typing import Annotated
 from model.database import DBSession
@@ -9,9 +10,17 @@ from schemas import BaseModel
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:5173"
+]
 
-
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 from schemas import NoteInput
 #Health checks
